@@ -1,0 +1,350 @@
+[
+    {
+        "id": "c9eedc0daf37ced6",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "cc4cb1445fae9b93",
+        "type": "template",
+        "z": "c9eedc0daf37ced6",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "html",
+        "syntax": "mustache",
+        "template": "<!DOCTYPE html>\n<html lang=\"en\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Yapılacaklar Listesi</title>\n    <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\">\n</head>\n\n<body>\n    <div class=\"container mt-5\">\n        <div class=\"row\">\n            <div class=\"col-md-8 offset-md-2\">\n                {{#error}}\n                <div class=\"alert alert-danger\">\n                        <h4>{{message}}</h4>\n                        {{/error}}\n                    <form action=\"/add\" method=\"POST\">\n                    <div class=\"input-group input-group-lg\">\n                        <input type=\"text\" name=\"name\" class=\"form-control {{#error}}border-danger{{/error}}\" placeholder=\"Enter a job\">\n                        <button class=\"btn btn-outline-secondary\" type=\"reset\">Delete</button>\n                        <button class=\"btn btn-primary\" type=\"submit\">Add</button>\n                    </div>\n                </form>\n                <div class=\"card mt-2 overflow-hidden\">\n                    <div class=\"card-body p-0\">\n                         <div class=\"table-responsive\">\n                        <table class=\"table table-hover m-0\">\n                        <thead class=\"table-dark\">\n                            <tr>\n                                <th colspan=\"2\">Job</th>\n                                <th></th>\n                            </tr>\n                        </thead>\n                        <tbody>\n                            {{#payload}}\n                            <tr>\n                                <td>{{name}}</td>\n                                <td align=\"right\">    \n                                    <div class=\"btn-group text-right\">\n                                        <form method=\"POST\">\n                                            <input type=\"hidden\" name=\"id\" value=\"{{id}}\">\n                                        {{#done}}\n                                            <button type=\"submit\" class=\"btn btn-info\">Change</button>\n                                        {{/done}}\n                                        {{^done}}\n                                            <button type=\"submit\" class=\"btn btn-secondary\">Edit</button>\n                                            <button type=\"submit\" class=\"btn btn-success\">Remind</button>\n                                            <button type=\"submit\" class=\"btn btn-danger\">Complete</button>\n                                        {{/done}}\n                                            <button type=\"submit\" formaction=\"/trash\" class=\"btn btn-warning\">Delete</button>\n                                        </form>\n                                    </div>\n                                </td>\n                                </tr>\n                                {{/payload}}\n                                {{^payload}}\n                                <tr>\n                                    <td colspan=\"2\" class=\"text-muted text-center\">There is no job yet... </td>    \n                                </tr>\n                                {{/payload}}\n                            </tbody>\n                        </table>\n                    </div>\n                 </div>\n            </div>\n         </div>\n        <script src=\"/js/bootstrap.bundle.min.js\"></script>\n</body>\n\n</html>",
+        "output": "str",
+        "x": 420,
+        "y": 240,
+        "wires": [
+            [
+                "debeb2be46a14671"
+            ]
+        ]
+    },
+    {
+        "id": "3bf21f180c1539a1",
+        "type": "http in",
+        "z": "c9eedc0daf37ced6",
+        "name": "",
+        "url": "/",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 50,
+        "y": 240,
+        "wires": [
+            [
+                "b49469a45515b9ca"
+            ]
+        ]
+    },
+    {
+        "id": "debeb2be46a14671",
+        "type": "http response",
+        "z": "c9eedc0daf37ced6",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 590,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "b6c76daa49d7a96c",
+        "type": "function",
+        "z": "c9eedc0daf37ced6",
+        "name": "DB",
+        "func": "// Flush DB\n\nglobal.set(\"DB\" , {\n    todo: []\n})",
+        "outputs": 0,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\n\nconst DB = global.get(\"DB\") || {\n    todo: []\n}\n\nglobal.set(\"DB\", DB)",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "6fcf2c7719ccf7ae",
+        "type": "inject",
+        "z": "c9eedc0daf37ced6",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 120,
+        "wires": [
+            [
+                "b6c76daa49d7a96c"
+            ]
+        ]
+    },
+    {
+        "id": "b49469a45515b9ca",
+        "type": "function",
+        "z": "c9eedc0daf37ced6",
+        "name": "db.todo.find()",
+        "func": "const DB = global.get(\"DB\")\n\nmsg.payload = DB.todo\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 230,
+        "y": 240,
+        "wires": [
+            [
+                "cc4cb1445fae9b93"
+            ]
+        ]
+    },
+    {
+        "id": "cf4d1d668f63cd8b",
+        "type": "http in",
+        "z": "c9eedc0daf37ced6",
+        "name": "",
+        "url": "/add",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 80,
+        "y": 340,
+        "wires": [
+            [
+                "2c28392f7098d4d3"
+            ]
+        ]
+    },
+    {
+        "id": "7d7c60bbafdba1e7",
+        "type": "http response",
+        "z": "c9eedc0daf37ced6",
+        "name": "",
+        "statusCode": "302",
+        "headers": {
+            "location": "/"
+        },
+        "x": 820,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "1e32c39b87e9573e",
+        "type": "function",
+        "z": "c9eedc0daf37ced6",
+        "name": "db.todo.insert()",
+        "func": "const DB = global.get(\"DB\")\n\nlet todo = DB.todo\n\nconst now = new Date().getTime()\ntodo.push({\n    id: now,\n    name:msg. payload.name,\n    done: false,\n    stamp: {\n        createdAt: now,\n        ip: msg.req.ip,\n        user:\"\",\n        email:\"\"\n    }\n\n})\n\nDB.todo = todo\n\nglobal.set(\"DB\", DB)\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 340,
+        "wires": [
+            [
+                "7d7c60bbafdba1e7"
+            ]
+        ]
+    },
+    {
+        "id": "2c28392f7098d4d3",
+        "type": "function",
+        "z": "c9eedc0daf37ced6",
+        "name": "validation",
+        "func": "if(!msg.payload.name){\n    node.error(\"Job information cannot be empty!\", msg);\n    return\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 340,
+        "wires": [
+            [
+                "1e32c39b87e9573e"
+            ]
+        ]
+    },
+    {
+        "id": "795498c2395ace95",
+        "type": "catch",
+        "z": "c9eedc0daf37ced6",
+        "name": "",
+        "scope": [
+            "2c28392f7098d4d3"
+        ],
+        "uncaught": false,
+        "x": 310,
+        "y": 380,
+        "wires": [
+            [
+                "1b4ff883f7886601"
+            ]
+        ]
+    },
+    {
+        "id": "1b4ff883f7886601",
+        "type": "link out",
+        "z": "c9eedc0daf37ced6",
+        "name": "link out 1",
+        "mode": "link",
+        "links": [
+            "a67dd34bbc132093"
+        ],
+        "x": 415,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "a67dd34bbc132093",
+        "type": "link in",
+        "z": "c9eedc0daf37ced6",
+        "name": "link in 1",
+        "links": [
+            "1b4ff883f7886601",
+            "1b476d8ad0d45414",
+            "39252b3338378adc"
+        ],
+        "x": 75,
+        "y": 180,
+        "wires": [
+            [
+                "b49469a45515b9ca"
+            ]
+        ]
+    },
+    {
+        "id": "3d95bc62d13c0380",
+        "type": "http in",
+        "z": "c9eedc0daf37ced6",
+        "name": "",
+        "url": "/trash",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 110,
+        "y": 560,
+        "wires": [
+            [
+                "a3dd59bbefe91230"
+            ]
+        ]
+    },
+    {
+        "id": "751b7347ef54f7c5",
+        "type": "http response",
+        "z": "c9eedc0daf37ced6",
+        "name": "",
+        "statusCode": "302",
+        "headers": {
+            "location": "/"
+        },
+        "x": 840,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "8ba8aae57d85784c",
+        "type": "function",
+        "z": "c9eedc0daf37ced6",
+        "name": "db.todo.delete()",
+        "func": "const DB = global.get(\"DB\")\n\nlet todo = DB.todo\n\nconst index = todo.findIndex(x => x.id == msg.payload.id)\n\nif(!~index){\n    msg.error = {\n        message: \"İd ile eşleşen bir kayıt bulunamadı.\"\n    }\n    return [null, msg]\n}\n\ntodo.splice(index, 1)\n\nDB.todo = todo\n\nglobal.set(\"DB\", DB)\n\n\nreturn msg;",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 560,
+        "wires": [
+            [
+                "751b7347ef54f7c5"
+            ],
+            [
+                "39252b3338378adc"
+            ]
+        ],
+        "outputLabels": [
+            "Succ",
+            "Err"
+        ]
+    },
+    {
+        "id": "a3dd59bbefe91230",
+        "type": "function",
+        "z": "c9eedc0daf37ced6",
+        "name": "validation",
+        "func": "if(!msg.payload.id){\n    msg.error = {\n        message: \"It has to be id info for the job that you want to delete.\"\n    }\n    return [null, msg]\n}\n\nreturn msg;",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 560,
+        "wires": [
+            [
+                "8ba8aae57d85784c"
+            ],
+            [
+                "1b476d8ad0d45414"
+            ]
+        ],
+        "outputLabels": [
+            "Valid",
+            "Invalid"
+        ]
+    },
+    {
+        "id": "39252b3338378adc",
+        "type": "link out",
+        "z": "c9eedc0daf37ced6",
+        "name": "link out 2",
+        "mode": "link",
+        "links": [
+            "a67dd34bbc132093"
+        ],
+        "x": 795,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "1b476d8ad0d45414",
+        "type": "link out",
+        "z": "c9eedc0daf37ced6",
+        "name": "link out 3",
+        "mode": "link",
+        "links": [
+            "a67dd34bbc132093"
+        ],
+        "x": 495,
+        "y": 600,
+        "wires": []
+    }
+]
