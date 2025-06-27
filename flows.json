@@ -16,7 +16,7 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "<!DOCTYPE html>\n<html lang=\"en\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Yapılacaklar Listesi</title>\n    <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\">\n</head>\n\n<body>\n    <div class=\"container mt-5\">\n        <div class=\"row\">\n            <div class=\"col-md-8 offset-md-2\">\n                {{#error}}\n                <div class=\"alert alert-danger\">\n                        <h4>{{message}}</h4>\n                        {{/error}}\n                    <form action=\"/add\" method=\"POST\">\n                    <div class=\"input-group input-group-lg\">\n                        <input type=\"text\" name=\"name\" class=\"form-control {{#error}}border-danger{{/error}}\" placeholder=\"Enter a job\">\n                        <button class=\"btn btn-outline-secondary\" type=\"reset\">Delete</button>\n                        <button class=\"btn btn-primary\" type=\"submit\">Add</button>\n                    </div>\n                </form>\n                <div class=\"card mt-2 overflow-hidden\">\n                    <div class=\"card-body p-0\">\n                         <div class=\"table-responsive\">\n                        <table class=\"table table-hover m-0\">\n                        <thead class=\"table-dark\">\n                            <tr>\n                                <th colspan=\"2\">Job</th>\n                                <th></th>\n                            </tr>\n                        </thead>\n                        <tbody>\n                            {{#payload}}\n                            <tr>\n                                <td>{{name}}</td>\n                                <td align=\"right\">    \n                                    <div class=\"btn-group text-right\">\n                                        <form method=\"POST\">\n                                            <input type=\"hidden\" name=\"id\" value=\"{{id}}\">\n                                        {{#done}}\n                                            <button type=\"submit\" class=\"btn btn-info\">Change</button>\n                                        {{/done}}\n                                        {{^done}}\n                                            <button type=\"submit\" class=\"btn btn-secondary\">Edit</button>\n                                            <button type=\"submit\" class=\"btn btn-success\">Remind</button>\n                                            <button type=\"submit\" class=\"btn btn-danger\">Complete</button>\n                                        {{/done}}\n                                            <button type=\"submit\" formaction=\"/trash\" class=\"btn btn-warning\">Delete</button>\n                                        </form>\n                                    </div>\n                                </td>\n                                </tr>\n                                {{/payload}}\n                                {{^payload}}\n                                <tr>\n                                    <td colspan=\"2\" class=\"text-muted text-center\">There is no job yet... </td>    \n                                </tr>\n                                {{/payload}}\n                            </tbody>\n                        </table>\n                    </div>\n                 </div>\n            </div>\n         </div>\n        <script src=\"/js/bootstrap.bundle.min.js\"></script>\n</body>\n\n</html>",
+        "template": "<!DOCTYPE html>\n<html lang=\"en\">\n\n<head>\n    <link href=\"https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css\" rel=\"stylesheet\">\n    <meta charset=\"UTF-8\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Yapılacaklar Listesi</title>\n    <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/font/fonts/bootstrap-icons.min.css\">\n</head>\n\n<body>\n    <div class=\"container mt-5\">\n        <div class=\"row\">\n            <div class=\"col-md-8 offset-md-2\">\n                {{#error}}\n                <div class=\"alert alert-danger\">\n                        <h4>{{message}}</h4>\n                    </div>\n                    {{/error}}\n                    <form action=\"/opt/add\" method=\"POST\">\n                    <div class=\"input-group input-group-lg\">\n                        <input required type=\"text\" name=\"name\" class=\"form-control {{#error}}border-danger{{/error}}\" placeholder=\"Enter a job\">\n                        <button class=\"btn btn-outline-secondary\" type=\"reset\">Delete</button>\n                        <button class=\"btn btn-primary\" type=\"submit\">Add</button>\n                    </div>\n                </form>\n                <div class=\"card mt-2 overflow-hidden\">\n                    <div class=\"card-body p-0\">\n                         <div class=\"table-responsive\">\n                        <table class=\"table table-hover m-0\">\n                        <thead class=\"table-dark\">\n                            <tr>\n                                <th colspan=\"2\">Job</th>\n                                <th></th>\n                            </tr>\n                        </thead>\n                        <tbody>\n                            {{#payload}}\n                            <tr>\n                                <td>\n                                    {{#done}}\n                                    <h4 class=\"text-muted\"><del>{{name}}</del></h4>\n                                    {{/done}}\n                                    {{^done}}\n                                    <h4>{{name}}</h4>\n                                    {{/done}}\n                                    <div class=\"badge bg-secondary\"><small><i class=\"bi bi-calendar\"></i> {{date}} {{time}}</small></div>\n                                </td>\n                                <td align=\"right\">\n                                    <div class=\"btn-group text-right\">\n                                        <form method=\"POST\">\n                                            <input type=\"hidden\" name=\"id\" value=\"{{id}}\">\n                                        {{#done}}\n                                            <button data-bs-toggle=\"tooltip\" data-bs-title=\"Open\" type=\"submit\" formaction=\"/opt/open\" class=\"btn btn-warning\"><i class=\"bi bi-arrow-clockwise\"></i></button>\n                                        {{/done}}\n                                        {{^done}}\n                                            <a data-bs-toggle=\"tooltip\" data-bs-title=\"Edit\" href=\"/edit/{{id}}\" class=\"btn btn-info\"><i class=\"bi bi-pencil-fill\"></i></a>\n                                            <button data-bs-toggle=\"tooltip\" data-bs-title=\"Remind\" type=\"submit\" class=\"btn btn-success\"><i class=\"bi bi-alarm-fill\"></i></button>\n                                            <button data-bs-toggle=\"tooltip\" data-bs-title=\"Complete\" type=\"submit\" formaction=\"/opt/complete\" class=\"btn btn-danger\"><i class=\"bi bi-check-circle-fill\"></i></button>\n                                        {{/done}}\n                                            <button data-bs-toggle=\"tooltip\" data-bs-title=\"Trash\" type=\"submit\" formaction=\"/opt/trash\" class=\"btn btn-warning\"><i class=\"bi bi-trash3-fill\"></i></button>\n                                        </form>\n                                    </div>\n                                </td>\n                                </tr>\n                                {{/payload}}\n                                {{^payload}}\n                                <tr>\n                                    <td colspan=\"2\" class=\"text-muted text-center\">There is no job yet... </td>    \n                                </tr>\n                                {{/payload}}\n                            </tbody>\n                        </table>\n                    </div>\n                 </div>\n            </div>\n         </div>\n        <script src=\"/js/bootstrap.bundle.min.js\"></script>\n        <script>\n        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle=\"tooltip\"]')\n        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))\n        </script>\n        \n</body>\n\n</html>",
         "output": "str",
         "x": 420,
         "y": 240,
@@ -104,7 +104,7 @@
         "type": "function",
         "z": "c9eedc0daf37ced6",
         "name": "db.todo.find()",
-        "func": "const DB = global.get(\"DB\")\n\nmsg.payload = DB.todo\n\nreturn msg;",
+        "func": "const DB = global.get(\"DB\")\n\nmsg.payload = DB.todo\n\nreturn msg; ",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -120,114 +120,14 @@
         ]
     },
     {
-        "id": "cf4d1d668f63cd8b",
-        "type": "http in",
-        "z": "c9eedc0daf37ced6",
-        "name": "",
-        "url": "/add",
-        "method": "post",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 80,
-        "y": 340,
-        "wires": [
-            [
-                "2c28392f7098d4d3"
-            ]
-        ]
-    },
-    {
-        "id": "7d7c60bbafdba1e7",
-        "type": "http response",
-        "z": "c9eedc0daf37ced6",
-        "name": "",
-        "statusCode": "302",
-        "headers": {
-            "location": "/"
-        },
-        "x": 820,
-        "y": 340,
-        "wires": []
-    },
-    {
-        "id": "1e32c39b87e9573e",
-        "type": "function",
-        "z": "c9eedc0daf37ced6",
-        "name": "db.todo.insert()",
-        "func": "const DB = global.get(\"DB\")\n\nlet todo = DB.todo\n\nconst now = new Date().getTime()\ntodo.push({\n    id: now,\n    name:msg. payload.name,\n    done: false,\n    stamp: {\n        createdAt: now,\n        ip: msg.req.ip,\n        user:\"\",\n        email:\"\"\n    }\n\n})\n\nDB.todo = todo\n\nglobal.set(\"DB\", DB)\n\n\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 600,
-        "y": 340,
-        "wires": [
-            [
-                "7d7c60bbafdba1e7"
-            ]
-        ]
-    },
-    {
-        "id": "2c28392f7098d4d3",
-        "type": "function",
-        "z": "c9eedc0daf37ced6",
-        "name": "validation",
-        "func": "if(!msg.payload.name){\n    node.error(\"Job information cannot be empty!\", msg);\n    return\n}\n\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 320,
-        "y": 340,
-        "wires": [
-            [
-                "1e32c39b87e9573e"
-            ]
-        ]
-    },
-    {
-        "id": "795498c2395ace95",
-        "type": "catch",
-        "z": "c9eedc0daf37ced6",
-        "name": "",
-        "scope": [
-            "2c28392f7098d4d3"
-        ],
-        "uncaught": false,
-        "x": 310,
-        "y": 380,
-        "wires": [
-            [
-                "1b4ff883f7886601"
-            ]
-        ]
-    },
-    {
-        "id": "1b4ff883f7886601",
-        "type": "link out",
-        "z": "c9eedc0daf37ced6",
-        "name": "link out 1",
-        "mode": "link",
-        "links": [
-            "a67dd34bbc132093"
-        ],
-        "x": 415,
-        "y": 380,
-        "wires": []
-    },
-    {
         "id": "a67dd34bbc132093",
         "type": "link in",
         "z": "c9eedc0daf37ced6",
         "name": "link in 1",
         "links": [
-            "1b4ff883f7886601",
-            "1b476d8ad0d45414",
-            "39252b3338378adc"
+            "2313a682ebf4707e",
+            "3e0722ad0c2dcd56",
+            "c48607e362785b91"
         ],
         "x": 75,
         "y": 180,
@@ -238,24 +138,24 @@
         ]
     },
     {
-        "id": "3d95bc62d13c0380",
+        "id": "04e7529495feebec",
         "type": "http in",
         "z": "c9eedc0daf37ced6",
         "name": "",
-        "url": "/trash",
+        "url": "/opt/:type",
         "method": "post",
         "upload": false,
         "swaggerDoc": "",
-        "x": 110,
-        "y": 560,
+        "x": 80,
+        "y": 320,
         "wires": [
             [
-                "a3dd59bbefe91230"
+                "17affe84b6ce1b41"
             ]
         ]
     },
     {
-        "id": "751b7347ef54f7c5",
+        "id": "c0f587b7033137d5",
         "type": "http response",
         "z": "c9eedc0daf37ced6",
         "name": "",
@@ -263,30 +163,30 @@
         "headers": {
             "location": "/"
         },
-        "x": 840,
-        "y": 560,
+        "x": 680,
+        "y": 300,
         "wires": []
     },
     {
-        "id": "8ba8aae57d85784c",
+        "id": "10fc6359c23fd0b5",
         "type": "function",
         "z": "c9eedc0daf37ced6",
-        "name": "db.todo.delete()",
-        "func": "const DB = global.get(\"DB\")\n\nlet todo = DB.todo\n\nconst index = todo.findIndex(x => x.id == msg.payload.id)\n\nif(!~index){\n    msg.error = {\n        message: \"İd ile eşleşen bir kayıt bulunamadı.\"\n    }\n    return [null, msg]\n}\n\ntodo.splice(index, 1)\n\nDB.todo = todo\n\nglobal.set(\"DB\", DB)\n\n\nreturn msg;",
+        "name": "db.todo.opt()",
+        "func": " const DB = global.get(\"DB\")\n\nlet todo = DB.todo\n\nconst date = new Date()\nconst now = date.getTime()\n\nif(msg.req.params.type === \"add\") {\n    todo.push({\n        id: now,\n        name: msg.payload.name,\n        done: false,\n        stamp:{\n            createdAt: now,\n            ip: msg.req.ip,\n            username: \"\",\n            email: \"\"\n        },\n        date: date.toLocaleDateString(\"TR\"),\n        time: date.toLocaleTimeString(\"TR\")\n    })\n\n} else {\n    const index = todo.findIndex(x => x.id == msg.payload.id)\n   \n    if (!~index) {\n        msg.error = {\n            message: \"İd ile eşleşen bir kayıt bulunamadı.\"\n        }\n        return [null, msg]\n    } \n\n    if (msg.req.params.type === \"update\" && todo[index].done) {\n        msg.error = {\n            message: \"Tamamlanan işler güncellenemez!\"\n        }\n        return [null, msg]\n    } \n\nif (msg.req.params.type === \"trash\") {\n    todo.splice(index, 1)\n    }else {\n        switch (msg.req.params.type) {\n            case \"complete\":\n                todo[index].done = true\n                break;\n            case \"open\":\n                todo[index].done = false\n                break;\n            case \"update\":\n                todo[index].name = msg.payload.name\n                break;    \n        }\n    todo[index].stamp = {\n        createdAt: now,\n        ip: msg.req.ip,\n        username: \"\",\n        email: \"\"\n    },\n    todo[index].date = date.toLocaleDateString(\"TR\")\n    todo[index].time = date.toLocaleTimeString(\"TR\")\n    }\n}\n\n\n\n\nDB.todo = todo\n\nglobal.set(\"DB\", DB)\n\nreturn msg;",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 620,
-        "y": 560,
+        "x": 470,
+        "y": 300,
         "wires": [
             [
-                "751b7347ef54f7c5"
+                "c0f587b7033137d5"
             ],
             [
-                "39252b3338378adc"
+                "2313a682ebf4707e"
             ]
         ],
         "outputLabels": [
@@ -295,25 +195,25 @@
         ]
     },
     {
-        "id": "a3dd59bbefe91230",
+        "id": "17affe84b6ce1b41",
         "type": "function",
         "z": "c9eedc0daf37ced6",
         "name": "validation",
-        "func": "if(!msg.payload.id){\n    msg.error = {\n        message: \"It has to be id info for the job that you want to delete.\"\n    }\n    return [null, msg]\n}\n\nreturn msg;",
+        "func": "const typeLookup = {\n    trash: {\n        text: \"Silmek\",\n        requireArgs: [\"id\"]\n    },\n    complete: {\n        text: \"Tamamlamak\",\n        requireArgs: [\"id\"]\n    },\n    open: {\n        text: \"Açmak\",\n        requireArgs: [\"id\"]\n    },\n    add: {\n        text: \"Eklemek\",\n        requireArgs: [\"name\"]\n    },\n    update: {\n        text: \"Güncellemek\",\n        requireArgs: [\"id\", \"name\"]\n    }\n}\n\nif (!Object.keys(typeLookup).includes(msg.req.params.type)) {\n    msg.error = {\n        message: '${msg.req.params.type} Invalid parameter value!'\n    }\n    return [null, msg]\n}\n\n\nif (!typeLookup[msg.req.params.type].requireArgs.every(arg => msg.payload[arg])) {\n    msg.error = {\n        message: '${typeLookup[msg.req.params.type].text} It has to be ID info for the job ${typeLookup[msg.req.params.type].requireArg} that you want to select!'\n    }\n    return [null, msg]\n}\n\nreturn msg;",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 340,
-        "y": 560,
+        "x": 300,
+        "y": 320,
         "wires": [
             [
-                "8ba8aae57d85784c"
+                "10fc6359c23fd0b5"
             ],
             [
-                "1b476d8ad0d45414"
+                "3e0722ad0c2dcd56"
             ]
         ],
         "outputLabels": [
@@ -322,29 +222,116 @@
         ]
     },
     {
-        "id": "39252b3338378adc",
+        "id": "2313a682ebf4707e",
         "type": "link out",
         "z": "c9eedc0daf37ced6",
-        "name": "link out 2",
+        "name": "link out 6",
         "mode": "link",
         "links": [
             "a67dd34bbc132093"
         ],
-        "x": 795,
-        "y": 600,
+        "x": 625,
+        "y": 340,
         "wires": []
     },
     {
-        "id": "1b476d8ad0d45414",
+        "id": "3e0722ad0c2dcd56",
         "type": "link out",
         "z": "c9eedc0daf37ced6",
-        "name": "link out 3",
+        "name": "link out 7",
         "mode": "link",
         "links": [
             "a67dd34bbc132093"
         ],
-        "x": 495,
-        "y": 600,
+        "x": 425,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "cffd97495d86633b",
+        "type": "http in",
+        "z": "c9eedc0daf37ced6",
+        "name": "",
+        "url": "/edit/:id",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 70,
+        "y": 420,
+        "wires": [
+            [
+                "757f6dd3d297426e"
+            ]
+        ]
+    },
+    {
+        "id": "757f6dd3d297426e",
+        "type": "function",
+        "z": "c9eedc0daf37ced6",
+        "name": "db.todo.findOne()",
+        "func": "const DB = global.get(\"DB\")\n\nmsg.payload = DB.todo.find(x => x.id == msg.req.params.id)\n\nif(!msg.payload) {\n    msg.error = {\n            message: \"İd ile eşleşen bir kayıt bulunamadı.\"\n        }\n        return [null, msg]\n}\n\nif (msg.payload.done) {\n    msg.error = {\n        message: \"Tamamlanan işler güncellenemez!\"\n    }\n    return [null, msg]\n}\n\nreturn msg; ",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 420,
+        "wires": [
+            [
+                "4783f787e0604c18"
+            ],
+            [
+                "c48607e362785b91"
+            ]
+        ],
+        "outputLabels": [
+            "Succ",
+            "Err"
+        ]
+    },
+    {
+        "id": "4783f787e0604c18",
+        "type": "template",
+        "z": "c9eedc0daf37ced6",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "html",
+        "syntax": "mustache",
+        "template": "<!DOCTYPE html>\n<html lang=\"en\">\n\n<head>\n    <link href=\"https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css\" rel=\"stylesheet\">\n    <meta charset=\"UTF-8\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Yapılacaklar Listesi</title>\n    <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/font/fonts/bootstrap-icons.min.css\">\n</head>\n\n<body>\n    <div class=\"container mt-5\">\n        <div class=\"row\">\n            <div class=\"col-md-8 offset-md-2\">\n                {{#error}}\n                <div class=\"alert alert-danger\">\n                        <h4>{{message}}</h4>\n                    </div>\n                    {{/error}}\n                    <form action=\"/opt/update\" method=\"POST\">\n                    <input type=\"hidden\" name=\"id\" value=\"{{payload.id}}\">\n                    <div class=\"mb-3\">\n                        <input required type=\"text\" name=\"name\" value=\"{{payload.name}}\" class=\"form-control form-control-lg {{#error}}border-danger{{/error}} {{^error}}border-info{{/error}}\" placeholder=\"Enter a job\">\n                    </div>\n                    <div class=\"mb-3 float-end\">\n                        <a class=\"btn btn-outline-warning\" href=\"/\">Cancel</a>\n                        <button class=\"btn btn-outline-secondary\" type=\"reset\">Delete</button>\n                        <button class=\"btn btn-success px-5\" type=\"submit\">Update</button>\n                </form>\n         </div>\n        <script src=\"/js/bootstrap.bundle.min.js\"></script>\n        <script>\n        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle=\"tooltip\"]')\n        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))\n        </script>\n        \n</body>\n\n</html> ",
+        "output": "str",
+        "x": 520,
+        "y": 420,
+        "wires": [
+            [
+                "514f4b9c5ab1201f"
+            ]
+        ]
+    },
+    {
+        "id": "c48607e362785b91",
+        "type": "link out",
+        "z": "c9eedc0daf37ced6",
+        "name": "link out 1",
+        "mode": "link",
+        "links": [
+            "a67dd34bbc132093"
+        ],
+        "x": 485,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "514f4b9c5ab1201f",
+        "type": "http response",
+        "z": "c9eedc0daf37ced6",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 690,
+        "y": 420,
         "wires": []
     }
 ]
