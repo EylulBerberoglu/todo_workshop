@@ -22,7 +22,8 @@
         "y": 240,
         "wires": [
             [
-                "debeb2be46a14671"
+                "debeb2be46a14671",
+                "d8f0610484e8bbd4"
             ]
         ]
     },
@@ -104,7 +105,7 @@
         "type": "function",
         "z": "c9eedc0daf37ced6",
         "name": "db.todo.find()",
-        "func": "const DB = global.get(\"DB\")\n\nmsg.payload = DB.todo\n\nreturn msg; ",
+        "func": "const DB = global.get(\"DB\")\n\nmsg.payload = DB.todo\n\nreturn msg; \n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -115,7 +116,8 @@
         "y": 240,
         "wires": [
             [
-                "cc4cb1445fae9b93"
+                "cc4cb1445fae9b93",
+                "0816f117f36d80c0"
             ]
         ]
     },
@@ -147,10 +149,11 @@
         "upload": false,
         "swaggerDoc": "",
         "x": 80,
-        "y": 320,
+        "y": 480,
         "wires": [
             [
-                "17affe84b6ce1b41"
+                "17affe84b6ce1b41",
+                "e6b80981981ec57c"
             ]
         ]
     },
@@ -164,7 +167,7 @@
             "location": "/"
         },
         "x": 680,
-        "y": 300,
+        "y": 460,
         "wires": []
     },
     {
@@ -172,26 +175,30 @@
         "type": "function",
         "z": "c9eedc0daf37ced6",
         "name": "db.todo.opt()",
-        "func": " const DB = global.get(\"DB\")\n\nlet todo = DB.todo\n\nconst date = new Date()\nconst now = date.getTime()\n\nif(msg.req.params.type === \"add\") {\n    todo.push({\n        id: now,\n        name: msg.payload.name,\n        done: false,\n        stamp:{\n            createdAt: now,\n            ip: msg.req.ip,\n            username: \"\",\n            email: \"\"\n        },\n        date: date.toLocaleDateString(\"TR\"),\n        time: date.toLocaleTimeString(\"TR\")\n    })\n\n} else {\n    const index = todo.findIndex(x => x.id == msg.payload.id)\n   \n    if (!~index) {\n        msg.error = {\n            message: \"İd ile eşleşen bir kayıt bulunamadı.\"\n        }\n        return [null, msg]\n    } \n\n    if (msg.req.params.type === \"update\" && todo[index].done) {\n        msg.error = {\n            message: \"Tamamlanan işler güncellenemez!\"\n        }\n        return [null, msg]\n    } \n\nif (msg.req.params.type === \"trash\") {\n    todo.splice(index, 1)\n    }else {\n        switch (msg.req.params.type) {\n            case \"complete\":\n                todo[index].done = true\n                break;\n            case \"open\":\n                todo[index].done = false\n                break;\n            case \"update\":\n                todo[index].name = msg.payload.name\n                break;    \n        }\n    todo[index].stamp = {\n        createdAt: now,\n        ip: msg.req.ip,\n        username: \"\",\n        email: \"\"\n    },\n    todo[index].date = date.toLocaleDateString(\"TR\")\n    todo[index].time = date.toLocaleTimeString(\"TR\")\n    }\n}\n\n\n\n\nDB.todo = todo\n\nglobal.set(\"DB\", DB)\n\nreturn msg;",
-        "outputs": 2,
+        "func": " const DB = global.get(\"DB\")\n\nlet todo = DB.todo\n\nconst date = new Date()\nconst now = date.getTime()\n\nif(msg.req.params.type === \"add\") {\n    todo.push({\n        id: now,\n        name: msg.payload.name,\n        done: false,\n        stamp:{\n            createdAt: now,\n            ip: msg.req.ip,\n            username: \"\",\n            email: \"\"\n        },\n        date: date.toLocaleDateString(\"TR\"),\n        time: date.toLocaleTimeString(\"TR\")\n    })\n\n} \n\nelse {\n    const index = todo.findIndex(x => x.id == msg.payload.id)\n   \n    if (!~index) {\n        msg.error = {\n            message: \"İd ile eşleşen bir kayıt bulunamadı.\"\n        }\n        return [null, msg]\n    } \n\n    if (msg.req.params.type === \"update\" && todo[index].done) {\n        msg.error = {\n            message: \"Tamamlanan işler güncellenemez!\"\n        }\n        return [null, msg]\n    } \n\nif (msg.req.params.type === \"trash\") {\n    todo.splice(index, 1)\n    }\n    \nelse if (msg.req.params.type === \"schedule\"){\n    todo[index].schedule = msg.payload\n}\n\nelse {\n        switch (msg.req.params.type) {\n            case \"complete\":\n                todo[index].done = true\n                break;\n            case \"open\":\n                todo[index].done = false\n                break;\n            case \"update\":\n                todo[index].name = msg.payload.name\n                break;    \n        }\n    todo[index].stamp = {\n        createdAt: now,\n        ip: msg.req.ip,\n        username: \"\",\n        email: \"\"\n    },\n    todo[index].date = date.toLocaleDateString(\"TR\")\n    todo[index].time = date.toLocaleTimeString(\"TR\")\n    }\n}\n\n\n\n\nDB.todo = todo\n\nglobal.set(\"DB\", DB)\n\nreturn msg;",
+        "outputs": 3,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
         "x": 470,
-        "y": 300,
+        "y": 480,
         "wires": [
             [
                 "c0f587b7033137d5"
             ],
             [
                 "2313a682ebf4707e"
+            ],
+            [
+                "d7b6c40cab76e104"
             ]
         ],
         "outputLabels": [
             "Succ",
-            "Err"
+            "Err",
+            ""
         ]
     },
     {
@@ -199,7 +206,7 @@
         "type": "function",
         "z": "c9eedc0daf37ced6",
         "name": "validation",
-        "func": "const typeLookup = {\n    trash: {\n        text: \"Silmek\",\n        requireArgs: [\"id\"]\n    },\n    complete: {\n        text: \"Tamamlamak\",\n        requireArgs: [\"id\"]\n    },\n    open: {\n        text: \"Açmak\",\n        requireArgs: [\"id\"]\n    },\n    add: {\n        text: \"Eklemek\",\n        requireArgs: [\"name\"]\n    },\n    update: {\n        text: \"Güncellemek\",\n        requireArgs: [\"id\", \"name\"]\n    }\n}\n\nif (!Object.keys(typeLookup).includes(msg.req.params.type)) {\n    msg.error = {\n        message: '${msg.req.params.type} Invalid parameter value!'\n    }\n    return [null, msg]\n}\n\n\nif (!typeLookup[msg.req.params.type].requireArgs.every(arg => msg.payload[arg])) {\n    msg.error = {\n        message: '${typeLookup[msg.req.params.type].text} It has to be ID info for the job ${typeLookup[msg.req.params.type].requireArg} that you want to select!'\n    }\n    return [null, msg]\n}\n\nreturn msg;",
+        "func": "const typeLookup = {\n    trash: {\n        text: \"Silmek\",\n        requireArgs: [\"id\"]\n    },\n    complete: {\n        text: \"Tamamlamak\",\n        requireArgs: [\"id\"]\n    },\n    open: {\n        text: \"Açmak\",\n        requireArgs: [\"id\"]\n    },\n    add: {\n        text: \"Eklemek\",\n        requireArgs: [\"name\"]\n    },\n    update: {\n        text: \"Güncellemek\",\n        requireArgs: [\"id\", \"name\"]\n    },\n    schedule: {\n        text: \"Hatırlatıcı Kurmak\",\n        requireArgs: [\"id\"]\n    }\n}\n\nif (!Object.keys(typeLookup).includes(msg.req.params.type)) {\n    msg.error = {\n        message: '${msg.req.params.type} Invalid parameter value!'\n    }\n    return [null, msg]\n}\n\n\nif (!typeLookup[msg.req.params.type].requireArgs.every(arg => msg.payload[arg])) {\n    msg.error = {\n        message: '${typeLookup[msg.req.params.type].text} It has to be ID info for the job ${typeLookup[msg.req.params.type].requireArg} that you want to select!'\n    }\n    return [null, msg]\n}\n\nreturn msg;",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
@@ -207,13 +214,14 @@
         "finalize": "",
         "libs": [],
         "x": 300,
-        "y": 320,
+        "y": 480,
         "wires": [
             [
                 "10fc6359c23fd0b5"
             ],
             [
-                "3e0722ad0c2dcd56"
+                "3e0722ad0c2dcd56",
+                "fd1bb1a1984c2d6b"
             ]
         ],
         "outputLabels": [
@@ -231,7 +239,7 @@
             "a67dd34bbc132093"
         ],
         "x": 625,
-        "y": 340,
+        "y": 500,
         "wires": []
     },
     {
@@ -243,8 +251,8 @@
         "links": [
             "a67dd34bbc132093"
         ],
-        "x": 425,
-        "y": 340,
+        "x": 415,
+        "y": 540,
         "wires": []
     },
     {
@@ -252,12 +260,12 @@
         "type": "http in",
         "z": "c9eedc0daf37ced6",
         "name": "",
-        "url": "/edit/:id",
+        "url": "/schedule/:id",
         "method": "get",
         "upload": false,
         "swaggerDoc": "",
-        "x": 70,
-        "y": 420,
+        "x": 80,
+        "y": 340,
         "wires": [
             [
                 "757f6dd3d297426e"
@@ -269,7 +277,7 @@
         "type": "function",
         "z": "c9eedc0daf37ced6",
         "name": "db.todo.findOne()",
-        "func": "const DB = global.get(\"DB\")\n\nmsg.payload = DB.todo.find(x => x.id == msg.req.params.id)\n\nif(!msg.payload) {\n    msg.error = {\n            message: \"İd ile eşleşen bir kayıt bulunamadı.\"\n        }\n        return [null, msg]\n}\n\nif (msg.payload.done) {\n    msg.error = {\n        message: \"Tamamlanan işler güncellenemez!\"\n    }\n    return [null, msg]\n}\n\nreturn msg; ",
+        "func": "const DB = global.get(\"DB\")\n\nmsg.payload = DB.todo.find(x => x.id == msg.req.params.id)\n\nif(!msg.payload) {\n    msg.error = {\n            message: \"İd ile eşleşen bir kayıt bulunamadı.\"\n        }\n        return [null, msg]\n}\n\nif (msg.payload.done) {\n    msg.error = {\n        message: \"Tamamlanan işler için hatırlatma kurulamaz!\"\n    }\n    return [null, msg]\n}\n\nreturn msg; ",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
@@ -277,10 +285,11 @@
         "finalize": "",
         "libs": [],
         "x": 310,
-        "y": 420,
+        "y": 340,
         "wires": [
             [
-                "4783f787e0604c18"
+                "4783f787e0604c18",
+                "b6fc50063734bd75"
             ],
             [
                 "c48607e362785b91"
@@ -303,10 +312,11 @@
         "template": "<!DOCTYPE html>\n<html lang=\"en\">\n\n<head>\n    <link href=\"https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css\" rel=\"stylesheet\">\n    <meta charset=\"UTF-8\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Yapılacaklar Listesi</title>\n    <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/font/fonts/bootstrap-icons.min.css\">\n</head>\n\n<body>\n    <div class=\"container mt-5\">\n        <div class=\"row\">\n            <div class=\"col-md-8 offset-md-2\">\n                {{#error}}\n                <div class=\"alert alert-danger\">\n                        <h4>{{message}}</h4>\n                    </div>\n                    {{/error}}\n                    <form action=\"/opt/update\" method=\"POST\">\n                    <input type=\"hidden\" name=\"id\" value=\"{{payload.id}}\">\n                    <div class=\"mb-3\">\n                        <input required type=\"text\" name=\"name\" value=\"{{payload.name}}\" class=\"form-control form-control-lg {{#error}}border-danger{{/error}} {{^error}}border-info{{/error}}\" placeholder=\"Enter a job\">\n                    </div>\n                    <div class=\"mb-3 float-end\">\n                        <a class=\"btn btn-outline-warning\" href=\"/\">Cancel</a>\n                        <button class=\"btn btn-outline-secondary\" type=\"reset\">Delete</button>\n                        <button class=\"btn btn-success px-5\" type=\"submit\">Update</button>\n                </form>\n         </div>\n        <script src=\"/js/bootstrap.bundle.min.js\"></script>\n        <script>\n        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle=\"tooltip\"]')\n        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))\n        </script>\n        \n</body>\n\n</html> ",
         "output": "str",
         "x": 520,
-        "y": 420,
+        "y": 340,
         "wires": [
             [
-                "514f4b9c5ab1201f"
+                "514f4b9c5ab1201f",
+                "bac1b5a6539de28e"
             ]
         ]
     },
@@ -320,7 +330,7 @@
             "a67dd34bbc132093"
         ],
         "x": 485,
-        "y": 460,
+        "y": 380,
         "wires": []
     },
     {
@@ -331,7 +341,156 @@
         "statusCode": "",
         "headers": {},
         "x": 690,
-        "y": 420,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "318cd792993dc45d",
+        "type": "crontinject",
+        "z": "c9eedc0daf37ced6",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "crontiMethod": "onIntervalTime",
+        "crontiArgs": "[\"2025-06-27T10:10\",\"2025-06-27T10:10\",\"1\",\"\"]",
+        "inputs": 0,
+        "hasButton": true,
+        "x": 690,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0816f117f36d80c0",
+        "type": "debug",
+        "z": "c9eedc0daf37ced6",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 380,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "e6b80981981ec57c",
+        "type": "debug",
+        "z": "c9eedc0daf37ced6",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 300,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "d7b6c40cab76e104",
+        "type": "debug",
+        "z": "c9eedc0daf37ced6",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 540,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "fd1bb1a1984c2d6b",
+        "type": "debug",
+        "z": "c9eedc0daf37ced6",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 400,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "b6fc50063734bd75",
+        "type": "debug",
+        "z": "c9eedc0daf37ced6",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 460,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "bac1b5a6539de28e",
+        "type": "debug",
+        "z": "c9eedc0daf37ced6",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "d8f0610484e8bbd4",
+        "type": "debug",
+        "z": "c9eedc0daf37ced6",
+        "name": "debug 7",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 580,
+        "y": 200,
         "wires": []
     }
 ]
